@@ -1,0 +1,69 @@
+syntax = "proto3";
+package quelle;
+
+service SearchProvider {
+	rpc Search(QuelleSearchRequest) returns (QuelleSearchResult) {};
+	rpc Fetch(QuelleFetchRequest) returns (QuelleFetchResult) {};
+	rpc Page(QuellePageRequest) returns (QuellePageResult) {};
+}
+message QuelleSearchRequest {
+	repeated QuelleSearchClause clauses = 1;
+	QuelleSearchControls controls = 2;
+	uint64 count = 3;
+}
+message QuelleSearchResult {
+	string summary = 1;
+	QuelleSearchRequest enrichedRequest = 2;
+}
+message QuelleFetchRequest {
+	string session = 1;
+	uint64 cursor = 2;
+	uint64 count = 3;
+}
+message QuelleFetchResult {
+	uint64 cursor = 1;
+	uint64 remainder = 2;
+	string session = 3;
+	map<uint64, string> records = 4;
+}
+message QuellePageRequest {
+	string session = 1;
+	string format = 2;
+	uint64 page = 3;
+}
+message QuellePageResult {
+	string result = 1;
+	QuellePageRequest request = 2;
+}
+message QuelleSearchControls {
+	string domain = 1;
+	int32 span = 2;
+	int32 strict = 3;
+}
+message QuelleSearchClause {
+	string syntax = 1;
+	repeated QuelleSearchFragment fragments = 2;
+	string segment = 3;
+	enum Polarity {
+		UNDEFINED = 0;
+		POSITIVE = 1;
+		NEGATIVE = -1;
+	}
+	Polarity polarity = 4;
+}
+message QuelleSearchFragment {
+	repeated uint32 positionAspects = 1;
+	repeated QuelleTokenVector anyOf = 2;
+	string text = 3;
+}
+message QuelleTokenFeature {
+	string feature = 1;
+}
+message QuelleTokenMatch {
+	string condition = 1;
+	repeated QuelleTokenFeature anyFeature = 2;
+}
+message QuelleTokenVector {
+	string specification = 1;
+	repeated QuelleTokenMatch matchAll = 2;
+}
