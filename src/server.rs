@@ -2,9 +2,11 @@
 
     use tonic::{transport::Server, Request, Response, Status};
     use quelle::search_provider_server::{SearchProvider, SearchProviderServer};
-    use quelle::{QuelleSearchResult, QuelleSearchRequest};
-    use quelle::{QuelleFetchResult, QuelleFetchRequest};
-    use quelle::{QuellePageResult, QuellePageRequest};
+    use quelle::{SearchResult, SearchRequest};
+    use quelle::{FetchResult, FetchRequest};
+    use quelle::{PageResult, PageRequest};
+    use std::collections::HashMap;
+
     mod quelle;
 
     // defining a struct for our service
@@ -15,27 +17,42 @@
     #[tonic::async_trait]
     impl SearchProvider for QuelleSearchProvider {
         // our rpc impelemented as function
-        async fn search(&self,request:Request<QuelleSearchRequest>)->Result<Response<QuelleSearchResult>,Status>{
+        async fn search(&self,request:Request<SearchRequest>)->Result<Response<SearchResult>,Status>{
             // returning a response as SayResponse message as defined in .proto
-            Ok(Response::new(QuelleSearchResult{
-                // reading data from request which is awrapper around our SayRequest message defined in .proto
-                 message:format!("hello {}",request.get_ref().name),
+            Ok(Response::new(SearchResult{
+                success:false,
+                cursor: 0,
+                remainder: 0,
+                summary: String::from(""),
+                session: String::from(""),
+                enriched_request: None,
+                records: HashMap::new(),
+                errors: vec![ String::from("not implemented")],
+                warnings: vec![],
             }))
         }
         // our rpc impelemented as function
-        async fn fetch(&self,request:Request<QuelleFetchRequest>)->Result<Response<QuelleFetchResult>,Status>{
+        async fn fetch(&self,request:Request<FetchRequest>)->Result<Response<FetchResult>,Status>{
             // returning a response as SayResponse message as defined in .proto
-            Ok(Response::new(QuelleFetchResult{
-                // reading data from request which is awrapper around our SayRequest message defined in .proto
-                 message:format!("hello {}",request.get_ref().name),
+            Ok(Response::new(FetchResult{
+                success:false,
+                cursor: 0,
+                remainder: 0,
+                session: String::from(""),
+                records: HashMap::new(),
+                errors: vec![ String::from("not implemented")],
+                warnings: vec![],
             }))
         }
         // our rpc impelemented as function
-        async fn page(&self,request:Request<QuellePageRequest>)->Result<Response<QuellePageResult>,Status>{
+        async fn page(&self,request:Request<PageRequest>)->Result<Response<PageResult>,Status>{
             // returning a response as SayResponse message as defined in .proto
-            Ok(Response::new(QuellePageResult{
-                // reading data from request which is awrapper around our SayRequest message defined in .proto
-                 message:format!("hello {}",request.get_ref().name),
+            Ok(Response::new(PageResult{
+                success:false,
+                result: String::from(""),
+                request: None,
+                errors: vec![ String::from("not implemented")],
+                warnings: vec![],
             }))
         }
     }

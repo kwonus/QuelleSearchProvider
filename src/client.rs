@@ -1,5 +1,6 @@
 use quelle::search_provider_client::SearchProviderClient;
-use quelle::QuelleSearchRequest;
+use quelle::SearchRequest;
+use quelle::SearchClause;
 
     mod quelle;
 
@@ -12,13 +13,28 @@ use quelle::QuelleSearchRequest;
     // creating gRPC client from channel
         let mut client = SearchProviderClient::new(channel);
     // creating a new Request
-        let request = tonic::Request::new(
-            QuelleSearchRequest {
-               name:String::from("anshul")
-            },
-        );
+        let clause1 = SearchClause{
+            syntax: String::from("QuelleSearchProvider"),
+            segment:String::from("eternal power godhead"),
+            fragments: Vec::new(),
+            polarity:1,
+        };
+        let clause2 = SearchClause{
+            syntax: String::from("QuelleSearchProvider"),
+            segment:String::from("#run&/v/|/adj/"),
+            fragments: Vec::new(),
+            polarity:1,
+        };
+        let mut searchReq = SearchRequest{
+            controls: None,
+            clauses: vec! [ clause1, clause2 ],
+            count: 10,
+        };
+
+        let request = tonic::Request::new(searchReq);
+
     // sending request and waiting for response
-        let response = client.send(request).await?.into_inner();
+        let response = client.search(request).await?.into_inner();
         println!("RESPONSE={:?}", response);
         Ok(())
     }
